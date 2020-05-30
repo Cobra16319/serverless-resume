@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Defines serverless resources to be used by the cloudresumechallenge repository (API Gateway, Lamba, DynamoDB)
+
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+
+  CountUpdaterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: "visitor_counter"
+      CodeUri: lambda_function/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Events:
+        CountUpdate:
+          Type: Api
+          Properties:
+            Path: /count_update
+            Method: get
+            RestApiId:
+              Ref: CounterApi
+
+  CounterApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: "counter_api"
+      StageName: "prod"
+      Cors:
+        AllowMethods: "GET"
+        AllowHeaders: "X-Api-Key"
+        AllowOrigin: "https://j-swingle.com"
+
+  CounterTable:
+      Type: AWS::Serverless::SimpleTable
+      Properties:
+        PrimaryKey: "counter"
+        TableName: "visitor_counter"
+
+Outputs:
+  CounterApi:
+    Description: "Endpoint URL for the Prod stage of the API"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/count_update/"
+  CountUpdaterFunction:
+    Description: "ARN of the Lambda function"
+    Value: !GetAtt CountUpdaterFunction.Arn
+  CountUpdaterFunctionIAMRole:
+    Description: "ARN of the implicit IAM role created for the Lambda function"
+    Value: !GetAtt CountUpdaterFunctionRole.Arn
+  CounterTable:
+    Description: "ARN of the DynamoDB table"
+    Value: !GetAtt CounterTable.Arn
