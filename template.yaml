@@ -22,7 +22,7 @@ Resources:
         CountUpdate:
           Type: Api
           Properties:
-            Path: /
+            Path: /{proxy+}
             Method: get
             RestApiId:
               Ref: CounterApi
@@ -34,7 +34,7 @@ Resources:
       StageName: "prod"
       Cors:
         AllowMethods: "'GET'"
-        AllowHeaders: "'*'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
         AllowOrigin: "'*'"
 
   CounterTable:

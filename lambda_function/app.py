@@ -1,4 +1,5 @@
 import boto3
+import json
 
 def lambda_handler(event, context):
 
@@ -43,4 +44,10 @@ def lambda_handler(event, context):
 
 # Return the value
 
-    return previousCount + 1
+    newCount = int(previousCount + 1)
+
+    return {
+        'statusCode': 200,
+        'headers': { 'Content-Type': 'application/json' },
+        'body': json.dumps(newCount)
+        }
