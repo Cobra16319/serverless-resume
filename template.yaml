@@ -22,7 +22,7 @@ Resources:
         CountUpdate:
           Type: Api
           Properties:
-            Path: /count_update
+            Path: /
             Method: get
             RestApiId:
               Ref: CounterApi
@@ -33,26 +33,25 @@ Resources:
       Name: "counter_api"
       StageName: "prod"
       Cors:
-        AllowMethods: "GET"
-        AllowHeaders: "X-Api-Key"
-        AllowOrigin: "https://j-swingle.com"
+        AllowMethods: "'GET'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
 
   CounterTable:
-      Type: AWS::Serverless::SimpleTable
-      Properties:
-        PrimaryKey: "counter"
-        TableName: "visitor_counter"
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: "visitor_counter"
+        Type: "String"
+      TableName: "visitor_counter"
 
 Outputs:
   CounterApi:
     Description: "Endpoint URL for the Prod stage of the API"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/count_update/"
+    Value: !Sub "https://${CounterApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
   CountUpdaterFunction:
     Description: "ARN of the Lambda function"
     Value: !GetAtt CountUpdaterFunction.Arn
-  CountUpdaterFunctionIAMRole:
-    Description: "ARN of the implicit IAM role created for the Lambda function"
-    Value: !GetAtt CountUpdaterFunctionRole.Arn
   CounterTable:
     Description: "ARN of the DynamoDB table"
     Value: !GetAtt CounterTable.Arn

@@ -7,24 +7,40 @@ def lambda_handler(event, context):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('visitor_counter')
 
-# Obtain the previous value of the visitor counter from the DynamoDB table
+# Check if table has already had values written by "except"
 
-    response = table.get_item(
-	    Key = {'counters': 'visitor_counter'},
-	    ProjectionExpression = 'visitor_count'
-	    )
+    try:
+        response = table.get_item(
+            Key = {'visitor_counter': 'count'},
+            ProjectionExpression = 'visitors'
+        ) 
 
-    onlyValue = response.get('Item')
-    previousCount = int(onlyValue.get('visitor_count'))
+# If table has already been accessed, retrieve counter value...
 
-# Increment the DynamoDB table by 1 and return the new value
+        onlyValue = response.get('Item')
+        previousCount = int(onlyValue.get('visitors'))
 
-    response = table.update_item(
-        Key = {'counters': 'visitor_counter'},
-        UpdateExpression = 'SET visitor_count = :increase',
-        ExpressionAttributeValues = {
-            ':increase': (previousCount + 1)
-        }
-    )
+# ...then increment the counter by 1.
+
+        response = table.update_item(
+            Key = {'visitor_counter': 'count'},
+            UpdateExpression = 'SET visitors = :increase',
+            ExpressionAttributeValues = {
+                ':increase': (previousCount + 1)
+            }
+        )
+
+# If table has not been accessed, give a counter value of "1" and set table up so that "try" block will work next time
+
+    except:
+        table.put_item(
+            Item={
+            'visitor_counter': 'count',
+            'visitors': 1}
+        )
+
+        previousCount = 0
+
+# Return the value
 
     return previousCount + 1
