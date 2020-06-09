@@ -25,11 +25,12 @@ dynamodb_response = dynamodb_table.get_item(
 )
 item_response = dynamodb_response.get('Item')
 
-# Tests for correct Lambda status code
-assert lambda_metadata.get('HTTPStatusCode') == 200
+# PyTest tests
+def test_lambda_status_code():
+	assert lambda_metadata.get('HTTPStatusCode') == 200
 
-# Tests for correct API status code
-assert api_statuscode == '<Response [200]>'
+def test_api_status_code():
+	assert api_statuscode == '<Response [200]>'
 
-# Tests that the API is interacting with the correct value on the correct table
-assert int(item_response.get('visitors')) == int(api_response.text)
+def test_table():
+	assert int(item_response.get('visitors')) == int(api_response.text)
