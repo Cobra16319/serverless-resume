@@ -7,7 +7,7 @@ lambda_client = boto3.client('lambda',
 	region_name='us-west-1',
 	)
 lambda_response = lambda_client.invoke(
-	FunctionName="CountUpdaterFunction",
+	FunctionName="sam-app-CountUpdaterFunction-LK1JG5VM5BAP",
 	InvocationType='RequestResponse',
 	)
 lambda_metadata = lambda_response.get('ResponseMetadata')

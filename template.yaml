@@ -12,7 +12,6 @@ Resources:
   CountUpdaterFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: "CountUpdaterFunction"
       Policies:
         - DynamoDBCrudPolicy:
             TableName: "visitor_counter"
